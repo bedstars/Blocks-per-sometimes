@@ -24,8 +24,8 @@ public final class BpsScreen extends Screen {
     }
 
     private void label(String text, int x, int y, int w) {
-        StringWidget sw = new StringWidget(x, y, w, 10, Component.literal(text), this.font);
-        sw.alignCenter();
+        int tw = this.font.width(text);
+        StringWidget sw = new StringWidget(x + (w - tw) / 2, y, tw, 10, Component.literal(text), this.font);
         this.addRenderableWidget(sw);
     }
 
