@@ -2,7 +2,6 @@ package com.bpsmod;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public final class FishTracker {
     }
 
     public static void onLoad(Entity entity) {
-        if (entity.getType() != EntityType.ITEM) return;
+        if (!entity.getClass().getSimpleName().equals("ItemEntity")) return;
         if (tick - hookGoneTick <= 3 && near(entity.getX(), entity.getY(), entity.getZ())) {
             hookGoneTick = -1000;
             Stats.record(Stats.Metric.FISH);
@@ -40,7 +39,7 @@ public final class FishTracker {
     }
 
     public static void onUnload(Entity entity) {
-        if (entity.getType() != EntityType.FISHING_BOBBER) return;
+        if (!entity.getClass().getSimpleName().equals("FishingHook")) return;
         Minecraft mc = Minecraft.getInstance();
         if (!(entity instanceof Projectile p) || p.getOwner() != mc.player) return;
         hookGoneTick = tick;
