@@ -48,7 +48,7 @@ public final class BpsMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             FishTracker.tick();
             if (openDelay > 0 && --openDelay == 0) {
-                Minecraft.getInstance().setScreen(new BpsScreen());
+                openScreen(new BpsScreen());
             }
         });
 
@@ -69,5 +69,19 @@ public final class BpsMod implements ClientModInitializer {
                 || s.is(Blocks.NETHER_WART) || s.is(Blocks.SUGAR_CANE)
                 || s.is(Blocks.CACTUS) || s.is(Blocks.COCOA)
                 || s.is(Blocks.SWEET_BERRY_BUSH) || s.is(Blocks.BAMBOO);
+    }
+    
+    private static void openScreen(net.minecraft.client.gui.screens.Screen screen) {
+        Minecraft mc = Minecraft.getInstance();
+        for (String name : new String[]{"setScreenAndShow", "setScreen"}) {
+            try {
+                mc.getClass().getMethod(name, net.minecraft.client.gui.screens.Screen.class).invoke(mc, screen);
+                return;
+            } catch (NoSuchMethodException ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
     }
 }
