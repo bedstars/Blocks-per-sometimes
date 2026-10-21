@@ -11,7 +11,6 @@ public final class BpsHud {
         BpsConfig c = BpsConfig.get();
         if (!c.enabled) return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.options.hideGui) return;
 
         Font font = mc.font;
         long now = System.currentTimeMillis();
