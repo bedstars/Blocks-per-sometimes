@@ -30,3 +30,4 @@ jobs:
         with:
           name: blocks-per-sometimes-mc${{ matrix.mc }}
           path: build/libs/*.jar
+
