@@ -11,6 +11,7 @@ public final class BpsHud {
         BpsConfig c = BpsConfig.get();
         if (!c.enabled) return;
         Minecraft mc = Minecraft.getInstance();
+        if (mc.options.hideGui) return;
 
         Font font = mc.font;
         long now = System.currentTimeMillis();
@@ -34,6 +35,26 @@ public final class BpsHud {
                 y += font.lineHeight + 2;
                 line++;
             }
+        }
+
+        if (c.showJuice) {
+            int ph = JuiceTracker.perHour();
+            String text = c.format
+                    .replace("{name}", c.juiceName)
+                    .replace("{window}", "/h")
+                    .replace("{count}", ph < 0 ? "..." : String.valueOf(ph));
+            drawLine(g, font, text, 0, y, line, c, now);
+            y += font.lineHeight + 2;
+            line++;
+        }
+
+        if (c.showJuiceEstimate) {
+            long est = Math.round(JuiceTracker.estimatePerHour());
+            String text = c.format
+                    .replace("{name}", c.juiceName + " est")
+                    .replace("{window}", "/h")
+                    .replace("{count}", String.valueOf(est));
+            drawLine(g, font, text, 0, y, line, c, now);
         }
 
         pose.popMatrix();

@@ -3,13 +3,16 @@
   "id": "bpsmod",
   "version": "${version}",
   "name": "Blocks per sometimes",
-  "description": "Shows blocks, crops and fish per second, per 10 minutes and per hour. Open the settings with /bpsmod.",
+  "description": "Shows blocks, crops, fish and juice boxes per second / 10 minutes / hour. Press O (or use /bpsmod) for the settings.",
   "authors": [],
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
     "client": ["com.bpsmod.BpsMod"]
   },
+  "mixins": [
+    { "config": "bpsmod.mixins.json", "environment": "client" }
+  ],
   "depends": {
     "fabricloader": ">=0.19.3",
     "minecraft": ">=26.1.2",

@@ -69,6 +69,11 @@ public final class Stats {
         TRACKS[m.ordinal()].add(System.currentTimeMillis());
     }
 
+    /** Events of this metric in the last N seconds (N <= 3600). */
+    public static int last(Metric m, int seconds, long nowMs) {
+        return TRACKS[m.ordinal()].sum(nowMs, seconds);
+    }
+
     public static int count(Metric m, Window w, long nowMs) {
         Track t = TRACKS[m.ordinal()];
         return switch (w) {

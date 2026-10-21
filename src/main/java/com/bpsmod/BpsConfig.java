@@ -27,6 +27,17 @@ public final class BpsConfig {
     public ColorMode colorMode = ColorMode.SOLID;
     public boolean shadow = true;
 
+    public boolean showJuice = true;
+    public boolean serverBlocks = true;
+    public boolean debug = false;
+    public String juiceName = "Juice";
+
+    public boolean showJuiceEstimate = true;
+    public double juicerAmount = 5;    // farming: juice boxes per proc
+    public double juicerChance = 1.62; // farming: percent per crop
+    public double juicyAmount = 10;    // mining: juice boxes per proc
+    public double juicyChance = 1.0;   // mining: percent per block
+
     public float scale = 1.0f;
     public int x = 4;
     public int y = 4;
@@ -59,6 +70,7 @@ public final class BpsConfig {
         if (c.names == null || c.names.length != 3) c.names = DEFAULT_NAMES.clone();
         if (c.windows == null || c.windows.length != 3) c.windows = DEFAULT_WINDOWS.clone();
         if (c.format == null) c.format = DEFAULT_FORMAT;
+        if (c.juiceName == null) c.juiceName = "Juice";
         if (c.colorMode == null) c.colorMode = ColorMode.SOLID;
         if (c.scale < 0.5f || c.scale > 4f) c.scale = 1.0f;
         if (!c.setHex(c.colorHex)) {
@@ -80,6 +92,7 @@ public final class BpsConfig {
         names = DEFAULT_NAMES.clone();
         windows = DEFAULT_WINDOWS.clone();
         format = DEFAULT_FORMAT;
+        juiceName = "Juice";
     }
 
     /** Accepts RRGGBB or #RRGGBB (also RGB shorthand). Returns false if invalid. */

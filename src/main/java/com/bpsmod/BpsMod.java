@@ -1,5 +1,6 @@
 package com.bpsmod;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.api.ClientModInitializer;
@@ -7,20 +8,20 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 
 public final class BpsMod implements ClientModInitializer {
     public static final String MOD_ID = "bpsmod";
 
     /** Opening a screen straight from a chat command gets overwritten when chat closes, so we wait a couple of ticks. */
     private static int openDelay = 0;
+    private static KeyMapping openKey;
 
     @Override
     public void onInitializeClient() {
@@ -31,6 +32,10 @@ public final class BpsMod implements ClientModInitializer {
                 VanillaHudElements.CHAT,
                 Identifier.fromNamespaceAndPath(MOD_ID, "hud"),
                 BpsHud::render);
+
+        // Key bind (default: O)
+        KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MOD_ID, "main"));
+        openKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.bpsmod.open", InputConstants.KEY_O, category));
 
         // /bpsmod
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
@@ -47,15 +52,19 @@ public final class BpsMod implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             FishTracker.tick();
+            JuiceTracker.tick();
+            while (openKey.consumeClick()) {
+                openScreen(new BpsScreen());
+            }
             if (openDelay > 0 && --openDelay == 0) {
                 openScreen(new BpsScreen());
             }
         });
 
-        // Blocks + crops
+        // Blocks + crops broken by the client itself (vanilla / singleplayer style)
         ClientPlayerBlockBreakEvents.AFTER.register((level, player, pos, state) -> {
             Stats.record(Stats.Metric.BLOCKS);
-            if (isCrop(state)) Stats.record(Stats.Metric.CROPS);
+            if (BlockTracker.isCrop(state)) Stats.record(Stats.Metric.CROPS);
         });
 
         // Fish
@@ -63,14 +72,6 @@ public final class BpsMod implements ClientModInitializer {
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> FishTracker.onUnload(entity));
     }
 
-    private static boolean isCrop(BlockState s) {
-        return s.is(BlockTags.CROPS)
-                || s.is(Blocks.MELON) || s.is(Blocks.PUMPKIN)
-                || s.is(Blocks.NETHER_WART) || s.is(Blocks.SUGAR_CANE)
-                || s.is(Blocks.CACTUS) || s.is(Blocks.COCOA)
-                || s.is(Blocks.SWEET_BERRY_BUSH) || s.is(Blocks.BAMBOO);
-    }
-    
     private static void openScreen(net.minecraft.client.gui.screens.Screen screen) {
         Minecraft mc = Minecraft.getInstance();
         for (String name : new String[]{"setScreenAndShow", "setScreen"}) {
