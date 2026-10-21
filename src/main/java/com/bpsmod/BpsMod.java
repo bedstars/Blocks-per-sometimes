@@ -100,4 +100,24 @@ public final class BpsMod implements ClientModInitializer {
             }
         }
     }
+
+    /** Current screen, works on both 26.1.2 (field) and 26.2 (accessor). */
+    public static net.minecraft.client.gui.screens.Screen currentScreen() {
+        Minecraft mc = Minecraft.getInstance();
+        for (String name : new String[]{"screen", "getScreen"}) {
+            try {
+                Object o = mc.getClass().getMethod(name).invoke(mc);
+                return (net.minecraft.client.gui.screens.Screen) o;
+            } catch (NoSuchMethodException ignored) {
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        try {
+            Object o = mc.getClass().getField("screen").get(mc);
+            return (net.minecraft.client.gui.screens.Screen) o;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

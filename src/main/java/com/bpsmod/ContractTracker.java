@@ -301,7 +301,7 @@ public final class ContractTracker {
         }
 
         boolean contractsMenu = false;
-        if (mc.screen instanceof AbstractContainerScreen<?> acs) {
+        if (BpsMod.currentScreen() instanceof AbstractContainerScreen<?> acs) {
             if (norm(acs.getTitle().getString()).contains("contracts")) {
                 contractsMenu = true;
                 if (syncTick++ % 5 == 0) syncFromGui(acs);
