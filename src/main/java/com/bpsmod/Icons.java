@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 public final class Icons {
     public static final int LOGO = 0, MONITOR = 1, LIST = 2, PALETTE = 3, TEXT = 4, STAR = 5, CUBE = 6,
             SPROUT = 7, FISH = 8, POWER = 9, CLOCK = 10, EYE = 11, ARROWS = 12, SCALE = 13, SHADOW = 14,
-            RESET = 15, CLOSE = 16, BOTTLE = 17, BUG = 18, SIGNAL = 19, INFO = 20;
+            RESET = 15, CLOSE = 16, BOTTLE = 17, BUG = 18, SIGNAL = 19, INFO = 20, SCROLL = 21;
 
     private static final String[][] DATA = {
             // LOGO
@@ -51,6 +51,8 @@ public final class Icons {
             {"......##", "......##", "....#.##", "....#.##", "..#.#.##", "..#.#.##", "#.#.#.##", "########"},
             // INFO
             {"..####..", ".#.##.#.", "#..##..#", "#......#", "#..##..#", "#..##..#", ".#.##.#.", "..####.."},
+            // SCROLL (clipboard checklist)
+            {"..####..", "#.####.#", "#......#", "#.#.##.#", "#......#", "#.#.##.#", "#......#", "########"},
     };
 
     public static void draw(GuiGraphicsExtractor g, int icon, int x, int y, int color) {

@@ -7,6 +7,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.world.InteractionResult;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -26,6 +30,7 @@ public final class BpsMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         BpsConfig.load();
+        ContractTracker.load();
 
         // HUD (top-left)
         HudElementRegistry.attachElementBefore(
@@ -53,6 +58,7 @@ public final class BpsMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             FishTracker.tick();
             JuiceTracker.tick();
+            ContractTracker.tick(client);
             while (openKey.consumeClick()) {
                 openScreen(new BpsScreen());
             }
@@ -65,7 +71,16 @@ public final class BpsMod implements ClientModInitializer {
         ClientPlayerBlockBreakEvents.AFTER.register((level, player, pos, state) -> {
             Stats.record(Stats.Metric.BLOCKS);
             if (BlockTracker.isCrop(state)) Stats.record(Stats.Metric.CROPS);
+            ContractTracker.onBlockBroken(state);
         });
+
+        // Contracts: server chat (activated / complete), right-clicked contract item, save on exit
+        ClientReceiveMessageEvents.GAME.register(ContractTracker::onGameMessage);
+        UseItemCallback.EVENT.register((player, level, hand) -> {
+            ContractTracker.onUseItem(player, hand);
+            return InteractionResult.PASS;
+        });
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> ContractTracker.save());
 
         // Fish
         ClientEntityEvents.ENTITY_LOAD.register((entity, level) -> FishTracker.onLoad(entity));

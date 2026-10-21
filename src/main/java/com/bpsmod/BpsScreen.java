@@ -29,8 +29,8 @@ public final class BpsScreen extends Screen {
     private static final int GREEN = 0xFF3DFF8A, GREEN_BG = 0xFF123A27, GREEN_BG_HOVER = 0xFF1A4E35;
     private static final int TEXT = 0xFFE6EDF3, TEXT_OFF = 0xFFC4CED8, DIM = 0xFF7D8A97, RED = 0xFFFF5C6C;
 
-    private static final String[] TABS = {"Overlay", "Lines", "Style", "Text", "Juice", "Extras"};
-    private static final int[] TAB_ICONS = {Icons.MONITOR, Icons.LIST, Icons.PALETTE, Icons.TEXT, Icons.BOTTLE, Icons.STAR};
+    private static final String[] TABS = {"Overlay", "Lines", "Style", "Text", "Juice", "Contracts", "Extras"};
+    private static final int[] TAB_ICONS = {Icons.MONITOR, Icons.LIST, Icons.PALETTE, Icons.TEXT, Icons.BOTTLE, Icons.SCROLL, Icons.STAR};
     private static int page = 0;
 
     // ---- model ----
@@ -267,6 +267,18 @@ public final class BpsScreen extends Screen {
                 r.add(numberRow(Icons.CUBE, "Juicy chance %", () -> c.juicyChance, v -> c.juicyChance = v, 100));
                 r.add(info("Estimate uses your last minute of crops and\nother blocks (those trackers must be on)."));
             }
+            case 5 -> {
+                r.add(toggle(Icons.SCROLL, "Show contracts on overlay", () -> c.showContracts, () -> c.showContracts = !c.showContracts));
+                r.add(toggle(Icons.SIGNAL, "Alert when a slot is empty", () -> c.contractAlerts, () -> c.contractAlerts = !c.contractAlerts));
+                r.add(toggle(Icons.BOTTLE, "Ding sound", () -> c.contractSound, () -> c.contractSound = !c.contractSound));
+                r.add(stepper(Icons.CLOCK, "Remind every", () -> c.contractRepeat == 0 ? "once" : c.contractRepeat + "s",
+                        () -> c.contractRepeat = Math.max(0, c.contractRepeat - 15),
+                        () -> c.contractRepeat = Math.min(3600, c.contractRepeat + 15),
+                        () -> c.contractRepeat = 60));
+                r.add(action(Icons.SIGNAL, "Test alert", () -> ContractTracker.alert(net.minecraft.client.Minecraft.getInstance().player)));
+                r.add(action(Icons.RESET, "Forget contract state", ContractTracker::resetAll));
+                r.add(info("Open /contracts once so both slots sync."));
+            }
             default -> {
                 r.add(header("Detection"));
                 r.add(toggle(Icons.SIGNAL, "Server-side block breaks", () -> c.serverBlocks, () -> c.serverBlocks = !c.serverBlocks));
@@ -389,7 +401,7 @@ public final class BpsScreen extends Screen {
         // sidebar
         rect(g, x0 + 4, y0 + 32, 96, H - 32 - 30, SIDE_BG);
         for (int i = 0; i < TABS.length; i++) {
-            int ty = y0 + 36 + i * 26;
+            int ty = y0 + 36 + i * 24;
             int tx = x0 + 6, tw = 92, th = 22;
             boolean sel = i == page;
             boolean h = hov(tx, ty, tw, th);

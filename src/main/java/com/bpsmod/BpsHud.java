@@ -54,6 +54,15 @@ public final class BpsHud {
                     .replace("{window}", "/h")
                     .replace("{count}", String.valueOf(est));
             drawLine(g, font, text, 0, y, line, c, now);
+            y += font.lineHeight + 2;
+            line++;
+        }
+
+        if (c.showContracts) {
+            for (ContractTracker.Line l : ContractTracker.lines()) {
+                g.text(font, l.text(), 0, y, 0xFF000000 | l.color(), c.shadow);
+                y += font.lineHeight + 2;
+            }
         }
 
         pose.popMatrix();

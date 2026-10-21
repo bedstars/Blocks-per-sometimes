@@ -57,6 +57,7 @@ public final class BlockTracker {
         if (!gone(oldState) && gone(newState)) {
             Stats.record(Stats.Metric.BLOCKS);
             if (isCrop(oldState)) Stats.record(Stats.Metric.CROPS);
+            ContractTracker.onBlockBroken(oldState);
             counted = true;
         } else if (isCrop(oldState) && cropReset(oldState, newState)) {
             Stats.record(Stats.Metric.BLOCKS);

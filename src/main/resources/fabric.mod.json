@@ -3,7 +3,7 @@
   "id": "bpsmod",
   "version": "${version}",
   "name": "Blocks per sometimes",
-  "description": "Shows blocks, crops, fish and juice boxes per second / 10 minutes / hour. Press O (or use /bpsmod) for the settings.",
+  "description": "Shows blocks, crops, fish and juice boxes per second / 10 minutes / hour. Also tracks the 2 server contract slots with an empty-slot alert. Press O (or use /bpsmod) for the settings.",
   "authors": [],
   "license": "MIT",
   "environment": "client",

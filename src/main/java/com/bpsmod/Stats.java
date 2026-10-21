@@ -65,6 +65,7 @@ public final class Stats {
     }
 
     public static void record(Metric m) {
+        ContractTracker.onCount(m);
         if (!BpsConfig.get().tracker[m.ordinal()]) return;
         TRACKS[m.ordinal()].add(System.currentTimeMillis());
     }

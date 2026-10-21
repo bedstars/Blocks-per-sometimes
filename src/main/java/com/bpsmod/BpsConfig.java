@@ -38,6 +38,12 @@ public final class BpsConfig {
     public double juicyAmount = 10;    // mining: juice boxes per proc
     public double juicyChance = 1.0;   // mining: percent per block
 
+    public boolean showContracts = true;
+    public boolean contractAlerts = true;
+    public boolean contractSound = true;
+    /** Seconds between reminders while a contract slot is empty (0 = only once). */
+    public int contractRepeat = 60;
+
     public float scale = 1.0f;
     public int x = 4;
     public int y = 4;
@@ -72,6 +78,7 @@ public final class BpsConfig {
         if (c.format == null) c.format = DEFAULT_FORMAT;
         if (c.juiceName == null) c.juiceName = "Juice";
         if (c.colorMode == null) c.colorMode = ColorMode.SOLID;
+        if (c.contractRepeat < 0 || c.contractRepeat > 3600) c.contractRepeat = 60;
         if (c.scale < 0.5f || c.scale > 4f) c.scale = 1.0f;
         if (!c.setHex(c.colorHex)) {
             c.colorHex = "FFFFFF";
